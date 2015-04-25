@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	else {
 		inc = new ifstream("parameters.config", ifstream::in);
 	}
-	ScoreParams params;
+	ScoreParams params = {0};
 	readConfig(*inc, &params);
 	inc->close();
 	delete inc;

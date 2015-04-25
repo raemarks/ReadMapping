@@ -24,9 +24,7 @@ max3(
 	int z
 	)
 {
-	int max = 0;
-	max = ((x >= y && x >= z) ? x : (y > z ? y : z));
-	return max;
+	return ((x >= y && x >= z) ? x : (y > z ? y : z));
 }
 
 inline int
@@ -48,6 +46,12 @@ getSubstitutionScore(
 	int t, sub;
 	pDPCell pcell = NULL;
 
+	pcell = getCell(&align->grid, i, j);
+	if (align->s1[i-1] == align->s2[j-1])
+		pcell->match = true;
+	else
+		pcell->match = false;
+
 	if (i == 0 && j == 0) {
 		// Base case, "init" state where S(0,0) = 0
 		sub = 0;
@@ -57,20 +61,14 @@ getSubstitutionScore(
 		sub = NEG_INFINITY;
 	}
 	else {
-		// Get max of three values in cell at i-1, j-1
+		// Get max of three values in cell at i-1, j-1 (just its score)
 		pcell = getCell(&align->grid, i-1, j-1);
-		t = max3(pcell->S, pcell->D, pcell->I);
+		t = pcell->score;
 
-
-		pcell = getCell(&align->grid, i, j);
-		if (align->s1[i-1] == align->s2[j-1]) {
+		if (align->s1[i-1] == align->s2[j-1])
 			sub = t + align->params.match;
-			pcell->match = true;
-		}
-		else {
+		else
 			sub = t + align->params.mismatch;
-			pcell->match = false;
-		}
 	}
 
 	if (align->local == true)
@@ -99,7 +97,6 @@ getInsertionScore(
 	}
 	else if (i == 0) {
 		// Base case, "init" state where I(0, j) = h + j*g
-		// ?
 		ins = align->params.h + j*(align->params.g);
 	}
 	else {
@@ -406,7 +403,18 @@ calculateAlignment(
 			pcell->S = getSubstitutionScore(align, i, j);
 			pcell->I = getInsertionScore(align, i, j);
 			pcell->D = getDeletionScore(align, i, j);
+
 			pcell->score = max3(pcell->S, pcell->I, pcell->D);
+			if (pcell->score == pcell->S) {
+				pcell->prev = 's';
+			}
+			else if (pcell->score == pcell->I) {
+				pcell->prev = 'i';
+			}
+			else {
+				pcell->prev = 'd';
+			}
+
 			// Keep overall max
 			if (align->local == true && pcell->score > align->score) {
 				align->score = pcell->score;
@@ -428,7 +436,7 @@ retrace(
 	int i,
 	int j)
 {
-	pDPCell pcell;
+	pDPCell pcell, prev;
 	int k = 0;
 	char *start, *end, c;
 
@@ -449,17 +457,8 @@ retrace(
 		align->mini = i;
 		align->minj = j;
 
-		/*
-		if (pcell->score <= 0 && align->local == true)
-		{
-		align->mini = i;
-		align->minj = j;
-			break;
-		}
-		*/
-
-
-		if (pcell->score == pcell->S) {
+		switch(pcell->prev) {
+		case 's':
 			// Previous cell must have been from result of substitution. Add
 			// substitution to path and backtrack to upper left diagonal cell.
 
@@ -474,28 +473,36 @@ retrace(
 
 			i--;
 			j--;
-		}
-		else if (pcell->score == pcell->I) {
+			break;
+		case 'i':
 			// Previous cell must have been from result of insertion. Add
 			// insertion to path and backtrack to left cell.
-			if (k == 0 || align->alignpath[k-1] != 'I')
+			prev = getCell(&align->grid, i, j-1);
+			//Check if previous score was an opening gap
+			if (pcell->score - align->params.h - align->params.g == prev->score)
 				align->nopengaps++;
 
 			align->ngap++;
 			align->alignpath[k] = 'I';
 			j--;
-		}
-		else if (pcell->score == pcell->D) {
+			break;
+		case 'd':
 			// Previous cell must have been from result of deletion. Add
 			// deletion to path and backtrack to above cell.
-			if (k == 0 || align->alignpath[k-1] != 'I')
-			if (k == 0 || align->alignpath[k-1] != 'D')
+			prev = getCell(&align->grid, i-1, j);
+			//Check if previous score was an opening gap
+			if (pcell->score - align->params.h - align->params.g == prev->score)
 				align->nopengaps++;
 
 			align->ngap++;
 			align->alignpath[k] = 'D';
 			i--;
+			break;
+		default:
+			printf("Something went wrong! i: %d, j: %d\n", i, j);
+			exit(1);
 		}
+
 		k++;
 		if (k >= (align->n+1)*(align->m+1)) {
 			// For debug, shouldn't reach this

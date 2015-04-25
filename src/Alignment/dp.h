@@ -13,6 +13,10 @@ using std::list;
 #define MB 1024*1024
 
 typedef struct DPCell {
+	//If this cell got its score from substitution (s), insertion(i), or
+	//deletion(d)
+	char prev;
+	//Overall score
 	int score;
 	//Max substitution score
 	int S;

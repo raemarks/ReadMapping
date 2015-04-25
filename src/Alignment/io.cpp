@@ -217,6 +217,12 @@ outputLocalResult(
 	outputResult(align);
 
 	printf("Report: \n");
+	printf("%-40s%d\n", "Local alignment score = ", align->score);
+	printf("%-40s%d\n", "Score according to numbers generated = ",
+		align->nmatch*align->params.match +
+		align->nmismatch*align->params.mismatch +
+		align->ngap*align->params.g +
+		align->nopengaps*align->params.h);
 	printf("Local alignment score = %d at cell [%d,%d]\n", align->score,
 		align->maxi+align->offseti, align->maxj+align->offsetj);
 	printf("Number of matches = %d, mismatches = %d, gaps = %d, opening gaps = %d\n",
