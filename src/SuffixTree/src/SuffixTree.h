@@ -15,6 +15,9 @@
 	#define TRACE(x)
 #endif
 
+
+#define XValue 25
+
 namespace suffixtree
 {
 
@@ -90,6 +93,9 @@ class Tree
 	public:
 		std::vector<char> B;
 
+		int *A;
+		int nextIndex;
+
 		Tree(
 			std::string& input,
 			std::string alphabet
@@ -128,6 +134,8 @@ class Tree
 		void printTreeRec(Node *nd, int depth);
 		void PrintTree();
 		void PrintTreeInfo();
+		void DFS_PrepareRoot(Node *nd);
+		void PrepareIndexArray();
 };
 
 }

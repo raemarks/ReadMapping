@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "SuffixTree/SuffixTree.h"
+#include <SuffixTree.h>
 
 class ReadMapper {
 	private:

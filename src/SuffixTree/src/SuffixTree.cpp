@@ -440,7 +440,7 @@ Node *Tree::newNode(int id, Node *parent, int beg, int len) {
 void
 Tree::PrepareIndexArray() {
 	int size = input.length() + 1;
-	A = malloc(sizeof(int) * size);
+	A = (int*) malloc(sizeof(int) * size);
 	for (int i = 0; i < size; i++) {
 		A[i] = -1;
 	}

@@ -22,7 +22,8 @@ class Node {
 
 		Node *suffixLink;
 
-		Node *table[5];
+		int StartLeafIndex;
+		int EndLeafIndex;
 
 		//Equivalent to the "edge label" from the parent node to this node.
 		//Beg is the index of the first element of the substring described by
