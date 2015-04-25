@@ -10,10 +10,10 @@ TEST_MAIN=src/SuffixTree_test.cpp
 TEST_OUTPUT=test.out
 OBJECTS=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 
-OUTPUT=suffix
+OUTPUT=suffix.o
 
 all: $(OBJECTS)
-	$(CC) $(OBJECTS) $(MAIN) $(LIBS) $(CFLAGS) -o $(OUTPUT)
+	ld -r $(OBJECTS) -o $(OUTPUT)
 
 test: $(OBJECTS)
 	$(CC) $(OBJECTS) $(TEST_MAIN) $(CFLAGS) -o $(TEST_OUTPUT)
