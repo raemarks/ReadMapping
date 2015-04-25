@@ -110,6 +110,13 @@ class Tree
 
 		void EnumerateNodesDFS();
 
+		//Returns the lowest internal node encountered while following a
+		//matching path
+		Node *findPath(
+			Node *node,
+			const char *s
+			);
+
 		//Returns a pointer to the newly created leaf node
 		Node *findPathAndInsert(
 			Node *node,
@@ -128,6 +135,10 @@ class Tree
 		void printTreeRec(Node *nd, int depth);
 		void PrintTree();
 		void PrintTreeInfo();
+
+		std::vector<int> FindLoc(
+			  std::string& r
+			  );
 };
 
 }

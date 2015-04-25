@@ -2,6 +2,7 @@
 #include <strings.h>
 
 #include <iostream>
+#include <cstring>
 
 namespace suffixtree
 {
@@ -38,6 +39,31 @@ void Tree::Build() {
 		n = insertSuffix(n, i);
 	}
 	DisplayChildren(root);
+}
+
+Node *
+Tree::findPath(
+	Node *node,
+	const char *s
+	)
+{
+	Node *child = getChildByLabelBeginning(node, s[0]);
+
+	// No child by that label
+	if (child == nullptr) {
+		return node;
+	}
+
+	for (int i = 1; i < strlen(s); i++) {
+		if (i >= child->len) {
+			return findPath(child, s+i);
+		}
+		if (s[i] != input[child->beg + i]) {
+			return child;
+		}
+	}
+
+	panic("shouldnt actually happen");
 }
 
 Node *
@@ -457,4 +483,12 @@ Tree::PrintLongestRepeatSeqInfo() {
 	std::cout << std::endl;
 }
 
+std::vector<int>
+Tree::FindLoc(
+	std::string& r
+	)
+{
+	std::vector<int> vec;
+	return vec;
+}
 }
