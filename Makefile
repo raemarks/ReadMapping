@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 src/ReadMapper.cpp src/main.cpp src/SuffixTree/io.cpp src/SuffixTree/SuffixTree.cpp src/SuffixTree/SuffixTreeNode.cpp
+	g++ -std=c++11 -ISuffixTree/src io.cpp main.cpp ReadMapper.cpp
