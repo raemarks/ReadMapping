@@ -118,7 +118,7 @@ class Tree
 
 		//Returns the lowest internal node encountered while following a
 		//matching path
-		Node *findPath(
+		Node *FindPath(
 			Node *node,
 			const char *s
 			);

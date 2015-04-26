@@ -42,28 +42,28 @@ void Tree::Build() {
 }
 
 Node *
-Tree::findPath(
+Tree::FindPath(
 	Node *node,
 	const char *s
 	)
 {
 	Node *child = getChildByLabelBeginning(node, s[0]);
 
-	// No child by that label
+	//No child by that label
 	if (child == nullptr) {
 		return node;
 	}
 
 	for (int i = 1; i < strlen(s); i++) {
 		if (i >= child->len) {
-			return findPath(child, s+i);
+			return FindPath(child, s+i);
 		}
 		if (s[i] != input[child->beg + i]) {
+			//Backtrack up to internal node most recently visited.
 			return child;
 		}
 	}
-
-	panic("shouldnt actually happen");
+	panic("shouldn't actually happen");
 }
 
 Node *
@@ -533,6 +533,27 @@ Tree::FindLoc(
 	)
 {
 	std::vector<int> vec;
+	int read_ptr = 0;
+	const char *s = r.c_str();
+	Node *t = root;
+	Node *deepestNode = t;
+	Node *temp;
+
+	//Find deepest node/longest substring
+	while (read_ptr < strlen(s)) {
+		temp = FindPath(t, s + read_ptr);
+		read_ptr += temp->stringDepth - t->stringDepth;
+		if (temp->stringDepth > deepestNode->stringDepth) {
+			deepestNode = t;
+		}
+		t = temp->suffixLink;
+	}
+
+	for (int i = deepestNode->StartLeafIndex;
+		i <= deepestNode->EndLeafIndex; i++) {
+		vec.push_back(A[i]);
+	}
+
 	return vec;
 }
 }
