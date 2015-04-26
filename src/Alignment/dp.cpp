@@ -6,9 +6,9 @@
 
 using std::list;
 
-inline pDPCell
+inline DPCell *
 getCell(
-	pDPGrid grid,
+	DPGrid *grid,
 	int x,
 	int y
 	)
@@ -38,13 +38,13 @@ maxzero(
 
 int
 getSubstitutionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	)
 {
 	int t, sub;
-	pDPCell pcell = NULL;
+	DPCell *pcell = NULL;
 
 	pcell = getCell(&align->grid, i, j);
 	if (align->s1[i-1] == align->s2[j-1])
@@ -79,13 +79,13 @@ getSubstitutionScore(
 
 int
 getInsertionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	)
 {
 	int ins;
-	pDPCell pcell;
+	DPCell *pcell;
 
 	if (i == 0 && j == 0) {
 		// Base case, "init" state where I(0,0) = -infinity
@@ -116,13 +116,13 @@ getInsertionScore(
 
 int
 getDeletionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	)
 {
 	int del;
-	pDPCell pcell;
+	DPCell *pcell;
 
 	if (i == 0 && j == 0) {
 		// Base case, "init" state where D(0,0) = -infinity
@@ -153,13 +153,13 @@ getDeletionScore(
 
 void
 initializeGrid(
-	pAlignment align
+	Alignment *align
 	)
 {
 	align->grid.x = align->m+1;
 	align->grid.y = align->n+1;
 	align->grid.cells =
-	  (pDPCell) calloc((align->m + 1)*(align->n + 1), sizeof(DPCell));
+	  (DPCell *) calloc((align->m + 1)*(align->n + 1), sizeof(DPCell));
 	align->alignpath = (char *) calloc((align->m+1)*(align->n+1), sizeof(char));
 }
 
@@ -169,12 +169,12 @@ calculateGlobalAlignment(
 	char *s2,
 	char *s1_name,
 	char *s2_name,
-	pScoreParams params
+	ScoreParams *params
 	)
 {
-	pAlignment align = NULL;
+	Alignment *align = NULL;
 
-	align = (pAlignment) calloc(1, sizeof(Alignment));
+	align = (Alignment*) calloc(1, sizeof(Alignment));
 	align->s1 = strdup(s1);
 	align->s2 = strdup(s2);
 	align->s1_name = strdup(s1_name);
@@ -202,14 +202,14 @@ calculateLocalAlignments(
 	char *s2,
 	char *s1_name,
 	char *s2_name,
-	pScoreParams params,
+	ScoreParams *params,
 	int nalignments
 	)
 {
-	list<pAlignment> alignlist;
+	list<Alignment*> alignlist;
 	int i = 0;
 
-	pAlignment align = (pAlignment) calloc(1, sizeof(Alignment));
+	Alignment *align = (Alignment*) calloc(1, sizeof(Alignment));
 	align->s1 = strdup(s1);
 	align->s2 = strdup(s2);
 	align->s1_name = strdup(s1_name);
@@ -225,7 +225,7 @@ calculateLocalAlignments(
 	alignlist.sort(compare_alignments);
 
 	// Print each one
-	for (list<pAlignment>::iterator it = alignlist.begin();
+	for (list<Alignment*>::iterator it = alignlist.begin();
 		(it != alignlist.end() && i < nalignments);
 		it++, i++) {
 
@@ -236,7 +236,7 @@ calculateLocalAlignments(
 	}
 
 	// Cleanup
-	for (list<pAlignment>::iterator it = alignlist.begin();
+	for (list<Alignment*>::iterator it = alignlist.begin();
 		it != alignlist.end();
 		it++) {
 		free((*it)->s1_name);
@@ -252,8 +252,8 @@ calculateLocalAlignments(
 
 void
 calculateLocalAlignmentsRecursive(
-	pAlignment align,
-	list<pAlignment> &alignlist,
+	Alignment *align,
+	list<Alignment*> &alignlist,
 	int recursions
 	)
 {
@@ -304,10 +304,10 @@ calculateLocalAlignmentsRecursive(
 	alignlist.push_front(align);
 
 	// Make alignments for each corner
-	pAlignment align1 = (pAlignment) calloc(1, sizeof(Alignment));
-	pAlignment align2 = (pAlignment) calloc(1, sizeof(Alignment));
-	pAlignment align3 = (pAlignment) calloc(1, sizeof(Alignment));
-	pAlignment align4 = (pAlignment) calloc(1, sizeof(Alignment));
+	Alignment *align1 = (Alignment*) calloc(1, sizeof(Alignment));
+	Alignment *align2 = (Alignment*) calloc(1, sizeof(Alignment));
+	Alignment *align3 = (Alignment*) calloc(1, sizeof(Alignment));
+	Alignment *align4 = (Alignment*) calloc(1, sizeof(Alignment));
 
 	// Copy parameters
 	align1->params = align->params;
@@ -339,8 +339,8 @@ calculateLocalAlignmentsRecursive(
 
 void
 copyStrings(
-	pAlignment source,
-	pAlignment dest,
+	Alignment *source,
+	Alignment *dest,
 	int i1,
 	int i2,
 	int j1,
@@ -357,8 +357,8 @@ copyStrings(
 
 bool
 compare_alignments(
-	const pAlignment& first,
-	const pAlignment& second
+	const Alignment *first,
+	const Alignment *second
 	)
 {
 	// Sort in order of highest to lowest score
@@ -370,11 +370,11 @@ compare_alignments(
 
 void
 resetGrid(
-	pDPGrid grid
+	DPGrid *grid
 	)
 {
 	int i, j;
-	pDPCell pcell;
+	DPCell *pcell;
 
 	for (i = 0; i < grid->x; i++) {
 		for (j = 0; j < grid->y; j++) {
@@ -386,11 +386,11 @@ resetGrid(
 
 void
 calculateAlignment(
-	pAlignment align
+	Alignment *align
 	)
 {
 	int i = 0, j = 0;
-	pDPCell pcell = NULL;
+	DPCell *pcell = NULL;
 	align->score = 0;
 	align->maxi = 0;
 	align->maxj = 0;
@@ -432,11 +432,11 @@ calculateAlignment(
 
 void
 retrace(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j)
 {
-	pDPCell pcell, prev;
+	DPCell *pcell, *prev;
 	int k = 0;
 	char *start, *end, c;
 
@@ -446,7 +446,6 @@ retrace(
 	align->nopengaps = 0;
 	align->mini = 0;
 	align->minj = 0;
-
 
 	while(i > 0 || j > 0) {
 		pcell = getCell(&align->grid, i, j);

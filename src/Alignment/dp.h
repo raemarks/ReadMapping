@@ -83,16 +83,10 @@ typedef struct Alignment {
 } Alignment;
 
 
-typedef DPCell* pDPCell;
-typedef ScoreParams* pScoreParams;
-typedef DPGrid* pDPGrid;
-typedef Alignment* pAlignment;
-
-
 // Gets score for a cell if it were to be chosen in the event of a substitution
 int
 getSubstitutionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	);
@@ -100,7 +94,7 @@ getSubstitutionScore(
 // Gets score for a cell if it were to be chosen in the event of an insertion
 int
 getInsertionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	);
@@ -108,21 +102,21 @@ getInsertionScore(
 // Gets score for a cell if it were to be chosen in the event of an deletion
 int
 getDeletionScore(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j
 	);
 
 void
 initializeGrid(
-	pAlignment align
+	Alignment *align
 	);
 
 // Sort elements in list by largest to smallest
 bool
 compare_alignments(
-	const pAlignment& first,
-	const pAlignment& second
+	const Alignment *first,
+	const Alignment *second
 	);
 
 void
@@ -131,7 +125,7 @@ calculateGlobalAlignment(
 	char *s2,
 	char *s1_name,
 	char *s2_name,
-	pScoreParams params
+	ScoreParams *params
 	);
 
 void
@@ -140,7 +134,7 @@ calculateLocalAlignments(
 	char *s2,
 	char *s1_name,
 	char *s2_name,
-	pScoreParams params,
+	ScoreParams *params,
 	int nalignments
 	);
 
@@ -168,15 +162,15 @@ calculateLocalAlignments(
 // m
 void
 calculateLocalAlignmentsRecursive(
-	pAlignment align,
-	list<pAlignment> &alignlist,
+	Alignment *align,
+	list<Alignment*> &alignlist,
 	int recursions
 	);
 
 void
 copyStrings(
-	pAlignment source,
-	pAlignment dest,
+	Alignment *source,
+	Alignment *dest,
 	int i1,
 	int i2,
 	int j1,
@@ -185,17 +179,17 @@ copyStrings(
 
 void
 resetGrid(
-	pDPGrid grid
+	DPGrid *grid
 	);
 
 void
 calculateAlignment(
-	pAlignment align
+	Alignment *align
 	);
 
 void
 retrace(
-	pAlignment align,
+	Alignment *align,
 	int i,
 	int j);
 

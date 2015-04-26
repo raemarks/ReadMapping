@@ -19,22 +19,22 @@ readSequences(
 void
 readConfig(
 	std::ifstream &in,
-	pScoreParams params
+	ScoreParams *params
 	);
 
 void
 outputResult(
-	pAlignment align
+	Alignment *align
 	);
 
 void
 outputGlobalResult(
-	pAlignment align
+	Alignment *align
 	);
 
 void
 outputLocalResult(
-	pAlignment align
+	Alignment *align
 	);
 
 #endif

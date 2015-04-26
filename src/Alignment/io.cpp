@@ -79,7 +79,7 @@ readSequences(
 void
 readConfig(
 	ifstream &in,
-	pScoreParams params
+	ScoreParams *params
 	)
 {
 	char buf[25];
@@ -96,7 +96,7 @@ readConfig(
 
 void
 outputResult(
-	pAlignment align
+	Alignment *align
 	)
 {
 	int len, i = align->mini-1, j = align->minj-1, k, l;
@@ -168,7 +168,7 @@ outputResult(
 
 void
 outputGlobalResult(
-	pAlignment align
+	Alignment *align
 	)
 {
 	int len;
@@ -200,7 +200,7 @@ outputGlobalResult(
 
 void
 outputLocalResult(
-	pAlignment align
+	Alignment *align
 	)
 {
 	int len;
