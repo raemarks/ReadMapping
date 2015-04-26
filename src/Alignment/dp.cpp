@@ -166,8 +166,10 @@ initializeGrid(
 void
 calculateGlobalAlignment(
 	char *s1,
-	char *s2,
+	int s1_len,
 	char *s1_name,
+	char *s2,
+	int s2_len,
 	char *s2_name,
 	ScoreParams *params
 	)
@@ -175,12 +177,12 @@ calculateGlobalAlignment(
 	Alignment *align = NULL;
 
 	align = (Alignment*) calloc(1, sizeof(Alignment));
-	align->s1 = strdup(s1);
-	align->s2 = strdup(s2);
+	align->s1 = s1;
+	align->s2 = s2;
 	align->s1_name = strdup(s1_name);
 	align->s2_name = strdup(s2_name);
-	align->m = strlen(s1);
-	align->n = strlen(s2);
+	align->m = s1_len;
+	align->n = s2_len;
 	align->params = *params;
 	align->local = false;
 
@@ -190,8 +192,6 @@ calculateGlobalAlignment(
 	outputGlobalResult(align);
 	free(align->s1_name);
 	free(align->s2_name);
-	free(align->s1);
-	free(align->s2);
 	free(align->alignpath);
 	free(align);
 }
@@ -199,8 +199,10 @@ calculateGlobalAlignment(
 void
 calculateLocalAlignments(
 	char *s1,
-	char *s2,
+	int s1_len,
 	char *s1_name,
+	char *s2,
+	int s2_len,
 	char *s2_name,
 	ScoreParams *params,
 	int nalignments
@@ -210,12 +212,12 @@ calculateLocalAlignments(
 	int i = 0;
 
 	Alignment *align = (Alignment*) calloc(1, sizeof(Alignment));
-	align->s1 = strdup(s1);
-	align->s2 = strdup(s2);
+	align->s1 = s1;
+	align->s2 = s2;
 	align->s1_name = strdup(s1_name);
 	align->s2_name = strdup(s2_name);
-	align->m = strlen(s1);
-	align->n = strlen(s2);
+	align->m = s1_len;
+	align->n = s2_len;
 	align->params = *params;
 	align->local = false;
 
@@ -241,8 +243,6 @@ calculateLocalAlignments(
 		it++) {
 		free((*it)->s1_name);
 		free((*it)->s2_name);
-		free((*it)->s1);
-		free((*it)->s2);
 		free((*it)->alignpath);
 		free(*it);
 	}

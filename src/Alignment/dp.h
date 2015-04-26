@@ -122,8 +122,10 @@ compare_alignments(
 void
 calculateGlobalAlignment(
 	char *s1,
-	char *s2,
+	int s1_len,
 	char *s1_name,
+	char *s2,
+	int s2_len,
 	char *s2_name,
 	ScoreParams *params
 	);
@@ -131,8 +133,10 @@ calculateGlobalAlignment(
 void
 calculateLocalAlignments(
 	char *s1,
-	char *s2,
+	int s1_len,
 	char *s1_name,
+	char *s2,
+	int s2_len,
 	char *s2_name,
 	ScoreParams *params,
 	int nalignments
