@@ -37,4 +37,9 @@ outputLocalResult(
 	Alignment *align
 	);
 
+void
+printGrid(
+	Alignment *align
+	);
+
 #endif

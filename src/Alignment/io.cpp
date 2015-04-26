@@ -231,3 +231,43 @@ outputLocalResult(
 		len, ((int) ((float) 100*align->nmatch/len)), align->ngap, len,
 		((int) ((float) 100*align->ngap/len)));
 }
+
+void
+printGrid(
+	Alignment *align
+	)
+{
+	DPCell *cell = NULL;
+
+	printf("Grid: \n");
+	for (int i = 0; i < align->m + 1; i++) {
+		for (int i = 0; i < align->n + 1; i++)
+			printf("----------");
+		printf("\n| ");
+		int i = 0;
+		for (int j = 0; j < align->n + 1; j++) {
+			cell = getCell(&align->grid, i, j);
+			if (cell->S < -1000)
+				printf("S: -1000 |");
+			else
+				printf("S: %5d |", cell->S);
+		}
+		printf("\n| ");
+		for (int j = 0; j < align->n + 1; j++) {
+			cell = getCell(&align->grid, i, j);
+			if (cell->I < -1000)
+				printf("I: -1000 |");
+			else
+				printf("I: %5d |", cell->I);
+		}
+		printf("\n| ");
+		for (int j = 0; j < align->n + 1; j++) {
+			cell = getCell(&align->grid, i, j);
+			if (cell->D < -1000)
+				printf("D: -1000 |");
+			else
+				printf("D: %5d |", cell->D);
+		}
+		printf("\n");
+	}
+}

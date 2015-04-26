@@ -6,7 +6,7 @@
 
 using std::list;
 
-inline DPCell *
+DPCell *
 getCell(
 	DPGrid *grid,
 	int x,
@@ -152,6 +152,15 @@ getDeletionScore(
 }
 
 void
+deleteAlignment(
+	Alignment *align
+	)
+{
+	free(align->alignpath);
+	free(align->grid.cells);
+}
+
+void
 initializeGrid(
 	Alignment *align
 	)
@@ -163,7 +172,7 @@ initializeGrid(
 	align->alignpath = (char *) calloc((align->m+1)*(align->n+1), sizeof(char));
 }
 
-void
+Alignment *
 calculateGlobalAlignment(
 	const char *s1,
 	int s1_len,
@@ -179,8 +188,8 @@ calculateGlobalAlignment(
 	align = (Alignment*) calloc(1, sizeof(Alignment));
 	align->s1 = s1;
 	align->s2 = s2;
-	align->s1_name = strdup(s1_name);
-	align->s2_name = strdup(s2_name);
+	align->s1_name = s1_name;
+	align->s2_name = s2_name;
 	align->m = s1_len;
 	align->n = s2_len;
 	align->params = *params;
@@ -189,14 +198,11 @@ calculateGlobalAlignment(
 	initializeGrid(align);
 	calculateAlignment(align);
 	retrace(align, align->maxi, align->maxj);
-	outputGlobalResult(align);
-	free(align->s1_name);
-	free(align->s2_name);
-	free(align->alignpath);
-	free(align);
+
+	return align;
 }
 
-void
+Alignment *
 calculateLocalAlignment(
 	const char *s1,
 	int s1_len,
@@ -208,10 +214,11 @@ calculateLocalAlignment(
 	)
 {
 	Alignment *align = (Alignment*) calloc(1, sizeof(Alignment));
+
 	align->s1 = s1;
 	align->s2 = s2;
-	align->s1_name = strdup(s1_name);
-	align->s2_name = strdup(s2_name);
+	align->s1_name = s1_name;
+	align->s2_name = s2_name;
 	align->m = s1_len;
 	align->n = s2_len;
 	align->params = *params;
@@ -220,12 +227,8 @@ calculateLocalAlignment(
 	initializeGrid(align);
 	calculateAlignment(align);
 	retrace(align, align->maxi, align->maxj);
-	outputLocalResult(align);
 
-	free(align->s1_name);
-	free(align->s2_name);
-	free(align->alignpath);
-	free(align);
+	return align;
 }
 
 void

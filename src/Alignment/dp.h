@@ -83,6 +83,13 @@ typedef struct Alignment {
 } Alignment;
 
 
+DPCell *
+getCell(
+	DPGrid *grid,
+	int x,
+	int y
+	);
+
 // Gets score for a cell if it were to be chosen in the event of a substitution
 int
 getSubstitutionScore(
@@ -112,6 +119,11 @@ initializeGrid(
 	Alignment *align
 	);
 
+void
+deleteAlignment(
+	Alignment *align
+	);
+
 // Sort elements in list by largest to smallest
 bool
 compare_alignments(
@@ -119,7 +131,7 @@ compare_alignments(
 	const Alignment *second
 	);
 
-void
+Alignment *
 calculateGlobalAlignment(
 	const char *s1,
 	int s1_len,
@@ -130,7 +142,7 @@ calculateGlobalAlignment(
 	ScoreParams *params
 	);
 
-void
+Alignment *
 calculateLocalAlignment(
 	const char *s1,
 	int s1_len,
@@ -139,16 +151,6 @@ calculateLocalAlignment(
 	int s2_len,
 	char *s2_name,
 	ScoreParams *params
-	);
-
-void
-copyStrings(
-	Alignment *source,
-	Alignment *dest,
-	int i1,
-	int i2,
-	int j1,
-	int j2
 	);
 
 void
