@@ -165,10 +165,10 @@ initializeGrid(
 
 void
 calculateGlobalAlignment(
-	char *s1,
+	const char *s1,
 	int s1_len,
 	char *s1_name,
-	char *s2,
+	const char *s2,
 	int s2_len,
 	char *s2_name,
 	ScoreParams *params
@@ -197,20 +197,16 @@ calculateGlobalAlignment(
 }
 
 void
-calculateLocalAlignments(
-	char *s1,
+calculateLocalAlignment(
+	const char *s1,
 	int s1_len,
 	char *s1_name,
-	char *s2,
+	const char *s2,
 	int s2_len,
 	char *s2_name,
-	ScoreParams *params,
-	int nalignments
+	ScoreParams *params
 	)
 {
-	list<Alignment*> alignlist;
-	int i = 0;
-
 	Alignment *align = (Alignment*) calloc(1, sizeof(Alignment));
 	align->s1 = s1;
 	align->s2 = s2;
@@ -219,122 +215,17 @@ calculateLocalAlignments(
 	align->m = s1_len;
 	align->n = s2_len;
 	align->params = *params;
-	align->local = false;
-
-	// Build local alignments
-	calculateLocalAlignmentsRecursive(align, alignlist, nalignments);
-	// Sort in order of best score
-	alignlist.sort(compare_alignments);
-
-	// Print each one
-	for (list<Alignment*>::iterator it = alignlist.begin();
-		(it != alignlist.end() && i < nalignments);
-		it++, i++) {
-
-		printf("Local alignment rank: %d *************************************"
-			"*******************************************\n", i+1);
-		outputLocalResult(*it);
-		putchar('\n');
-	}
-
-	// Cleanup
-	for (list<Alignment*>::iterator it = alignlist.begin();
-		it != alignlist.end();
-		it++) {
-		free((*it)->s1_name);
-		free((*it)->s2_name);
-		free((*it)->alignpath);
-		free(*it);
-	}
-	alignlist.clear();
-}
-
-
-void
-calculateLocalAlignmentsRecursive(
-	Alignment *align,
-	list<Alignment*> &alignlist,
-	int recursions
-	)
-{
-	// This may seem computationally heavy, but space and time requirements
-	// drastically decrease at each recursive step, since chunks are "take out"
-	// of the grid. Space and time are no more than 0(mn), the only factor
-	// scaling this is the number of recursions, which is independent of the
-	// input size.
-
-	if (recursions == 0) {
-		free(align->s1);
-		free(align->s2);
-		free(align->s1_name);
-		free(align->s2_name);
-		free(align);
-		return;
-	}
-
-	if (strlen(align->s1) == 0 && strlen(align->s2) == 0) {
-		free(align->s1);
-		free(align->s2);
-		free(align->s1_name);
-		free(align->s2_name);
-		free(align);
-		return;
-	}
+	align->local = true;
 
 	initializeGrid(align);
-	align->local = true;
 	calculateAlignment(align);
 	retrace(align, align->maxi, align->maxj);
-	// No alignment path generated, no optimal alignment.
-	if (align->score == 0) {
-		free(align->s1);
-		free(align->s2);
-		free(align->s1_name);
-		free(align->s2_name);
-		free(align->alignpath);
-		free(align->grid.cells);
-		free(align);
-		return;
-	}
+	outputLocalResult(align);
 
-
-	// Free grid before recursion to conserve memory
-	free(align->grid.cells);
-	// Push local alignment onto list
-	alignlist.push_front(align);
-
-	// Make alignments for each corner
-	Alignment *align1 = (Alignment*) calloc(1, sizeof(Alignment));
-	Alignment *align2 = (Alignment*) calloc(1, sizeof(Alignment));
-	Alignment *align3 = (Alignment*) calloc(1, sizeof(Alignment));
-	Alignment *align4 = (Alignment*) calloc(1, sizeof(Alignment));
-
-	// Copy parameters
-	align1->params = align->params;
-	align2->params = align->params;
-	align3->params = align->params;
-	align4->params = align->params;
-
-	// Copy appropriate segments of sequences for each corner, accounting for
-	// the strings indeces being shifted by 1. Set offsets from original grid.
-	copyStrings(align, align1, 0, align->mini-2, 0, align->minj-2);
-	align1->offseti = align->offseti + 0;
-	align1->offsetj = align->offsetj + 0;
-	copyStrings(align, align2, 0, align->mini-2, align->maxj, align->n-1);
-	align2->offseti = align->offseti + 0;
-	align2->offsetj = align->offsetj + align->maxj + 1;
-	copyStrings(align, align3, align->maxi, align->m-1, 0, align->minj-2);
-	align3->offseti = align->offseti + align->maxi + 1;
-	align3->offsetj = align->offsetj + 0;
-	copyStrings(align, align4, align->maxi, align->m-1, align->maxj, align->n-1);
-	align4->offseti = align->offseti + align->maxi + 1;
-	align4->offsetj = align->offsetj + align->maxj + 1;
-
-	// Run algorithm on all four corners
-	calculateLocalAlignmentsRecursive(align1, alignlist, recursions-1);
-	calculateLocalAlignmentsRecursive(align2, alignlist, recursions-1);
-	calculateLocalAlignmentsRecursive(align3, alignlist, recursions-1);
-	calculateLocalAlignmentsRecursive(align4, alignlist, recursions-1);
+	free(align->s1_name);
+	free(align->s2_name);
+	free(align->alignpath);
+	free(align);
 }
 
 void

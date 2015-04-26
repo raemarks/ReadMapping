@@ -56,9 +56,9 @@ typedef struct Alignment {
 	ScoreParams params;
 
 	char *s1_name;
-	char *s1;
+	const char *s1;
 	char *s2_name;
-	char *s2;
+	const char *s2;
 	int m;
 	int n;
 
@@ -121,54 +121,24 @@ compare_alignments(
 
 void
 calculateGlobalAlignment(
-	char *s1,
+	const char *s1,
 	int s1_len,
 	char *s1_name,
-	char *s2,
+	const char *s2,
 	int s2_len,
 	char *s2_name,
 	ScoreParams *params
 	);
 
 void
-calculateLocalAlignments(
-	char *s1,
+calculateLocalAlignment(
+	const char *s1,
 	int s1_len,
 	char *s1_name,
-	char *s2,
+	const char *s2,
 	int s2_len,
 	char *s2_name,
-	ScoreParams *params,
-	int nalignments
-	);
-
-// Need to re-run the algorithm on all four corners to determine the next best
-// optimal local alignment at each recursive step.
-//
-//                     maxj
-//               minj  |
-//                  |  |
-// --------------------------------------------------------n
-// |                xxxx
-// |                xxxx
-// | corner 1       xxxx     corner 2
-// |                xxxx
-// |                xxxx
-// |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - mini
-// |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-// |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - maxi
-// |                xxxx
-// |                xxxx
-// |                xxxx
-// | corner 3       xxxx     corner 4
-// |                xxxx
-// |                xxxx
-// m
-void
-calculateLocalAlignmentsRecursive(
-	Alignment *align,
-	list<Alignment*> &alignlist,
-	int recursions
+	ScoreParams *params
 	);
 
 void

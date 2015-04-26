@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
 		calculateGlobalAlignment(s1, strlen(s1), s1_name, s2, strlen(s2),
 			s2_name, &params);
 	else if (global == 1)
-		calculateLocalAlignments(s1, strlen(s1), s1_name, s2, strlen(s1),
-			s2_name, &params, 4);
+		calculateLocalAlignment(s1, strlen(s1), s1_name, s2, strlen(s1),
+			s2_name, &params);
 	else {
 		printf("Error: input 0 for global alignment and 1 for local alignment\n");
 		return 4;
