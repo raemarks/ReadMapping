@@ -549,6 +549,9 @@ Tree::FindLoc(
 		t = temp->suffixLink;
 	}
 
+	if (deepestNode->stringDepth < XValue)
+		return vec;
+
 	for (int i = deepestNode->StartLeafIndex;
 		i <= deepestNode->EndLeafIndex; i++) {
 		vec.push_back(A[i]);
