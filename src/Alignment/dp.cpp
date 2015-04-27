@@ -152,6 +152,22 @@ getDeletionScore(
 }
 
 void
+chooseWhichPath(
+	DPCell *cell
+	)
+{
+	if (cell->score == cell->D) {
+		cell->prev = 'd';
+	}
+	else if (cell->score == cell->I) {
+		cell->prev = 'i';
+	}
+	else {
+		cell->prev = 's';
+	}
+}
+
+void
 deleteAlignment(
 	Alignment *align
 	)
@@ -299,6 +315,7 @@ calculateAlignment(
 			pcell->D = getDeletionScore(align, i, j);
 
 			pcell->score = max3(pcell->S, pcell->I, pcell->D);
+			//chooseWhichPath(pcell);
 			if (pcell->score == pcell->S) {
 				pcell->prev = 's';
 			}
@@ -330,9 +347,9 @@ retrace(
 	int i,
 	int j)
 {
-	DPCell *pcell, *prev;
-	int k = 0;
-	char *start, *end, c;
+	DPCell *cell, *prev;
+	int k = 0, sub, score;
+	char *start, *end, c, direction;
 
 	align->nmatch = 0;
 	align->nmismatch = 0;
@@ -341,62 +358,121 @@ retrace(
 	align->mini = 0;
 	align->minj = 0;
 
-	while(i > 0 || j > 0) {
-		pcell = getCell(&align->grid, i, j);
+	//Moving backward up the grid, start at end.
+	cell = getCell(&align->grid, i, j);
+	//Only the last cell will tell us where it last was.
+	direction = cell->prev;
+	score = cell->score;
 
-		if (pcell->score <= 0 && align->local == true)
+	while(i > 0 || j > 0) {
+		if (score <= 0 && align->local == true)
 			break;
 
 		align->mini = i;
 		align->minj = j;
 
-		switch(pcell->prev) {
+		switch(direction) {
 		case 's':
-			// Previous cell must have been from result of substitution. Add
-			// substitution to path and backtrack to upper left diagonal cell.
+			prev = getCell(&align->grid, i-1, j-1);
+			i--; j--;
 
-			if (pcell->match) {
+			if (cell->match) {
+				sub = align->params.match;
 				align->nmatch++;
 				align->alignpath[k] = 'S';
 			}
 			else {
+				sub = align->params.mismatch;
 				align->nmismatch++;
 				align->alignpath[k] = 's';
 			}
 
-			i--;
-			j--;
+			if (score == prev->S + sub) {
+				score = prev->S;
+				direction = 's';
+				prev->prev = 's';
+			}
+			else if (score == prev->I + sub) {
+				score = prev->I;
+				direction = 'i';
+				prev->prev = 'i';
+			}
+			else if (score == prev->D + sub) {
+				score = prev->D;
+				direction = 'd';
+				prev->prev = 'd';
+			}
+			else {
+				printf("Shouldn't happen!\n");
+				exit(1);
+			}
 			break;
+
 		case 'i':
-			// Previous cell must have been from result of insertion. Add
-			// insertion to path and backtrack to left cell.
+			align->ngap++;
+			align->alignpath[k] = 'i';
 			prev = getCell(&align->grid, i, j-1);
-			//Check if previous score was an opening gap
-			if (pcell->score - align->params.h - align->params.g == prev->score)
-				align->nopengaps++;
-
-			align->ngap++;
-			align->alignpath[k] = 'I';
 			j--;
-			break;
-		case 'd':
-			// Previous cell must have been from result of deletion. Add
-			// deletion to path and backtrack to above cell.
-			prev = getCell(&align->grid, i-1, j);
-			//Check if previous score was an opening gap
-			if (pcell->score - align->params.h - align->params.g == prev->score)
-				align->nopengaps++;
 
-			align->ngap++;
-			align->alignpath[k] = 'D';
-			i--;
+			if (score == prev->S + align->params.h + align->params.g) {
+				score = prev->S;
+				direction = 's';
+				align->nopengaps++;
+				prev->prev = 's';
+			}
+			else if (score == prev->I + align->params.g) {
+				score = prev->I;
+				direction = 'i';
+				prev->prev = 'i';
+			}
+			else if (score == prev->D + align->params.h + align->params.g) {
+				score = prev->D;
+				direction = 'd';
+				align->nopengaps++;
+				prev->prev = 'd';
+			}
+			else {
+				printf("Shouldn't happen!\n");
+				exit(1);
+			}
 			break;
+
+		case 'd':
+			align->ngap++;
+			align->alignpath[k] = 'd';
+			prev = getCell(&align->grid, i-1, j);
+			i--;
+
+			if (score == prev->S + align->params.h + align->params.g) {
+				score = prev->S;
+				direction = 's';
+				align->nopengaps++;
+				prev->prev = 's';
+			}
+			else if (score == prev->I + align->params.h + align->params.g) {
+				score = prev->I;
+				direction = 'i';
+				align->nopengaps++;
+				prev->prev = 'i';
+			}
+			else if (score == prev->D + align->params.g) {
+				score = prev->D;
+				direction = 'd';
+				prev->prev = 'd';
+			}
+			else {
+				printf("Shouldn't happen!\n");
+				exit(1);
+			}
+			break;
+
 		default:
-			printf("Something went wrong! i: %d, j: %d\n", i, j);
+			printf("Shouldn't happen!\n");
 			exit(1);
 		}
 
 		k++;
+		cell = prev;
 		if (k >= (align->n+1)*(align->m+1)) {
 			// For debug, shouldn't reach this
 			printf("K IS TOO LARGE\n");

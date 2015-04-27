@@ -115,6 +115,11 @@ getDeletionScore(
 	);
 
 void
+chooseWhichPath(
+	DPCell *cell
+	);
+
+void
 initializeGrid(
 	Alignment *align
 	);
