@@ -37,7 +37,7 @@ int main (int argc, char *argv[]) {
 	st->Build();
 	st->PrepareIndexArray();
 
-	
+
 	for (int i = 0; i < sequences.size(); i++) {
 		Sequence& s = sequences[i];
 		vector<int> L = st->FindLoc(s.content);
@@ -59,7 +59,6 @@ int main (int argc, char *argv[]) {
 					genome[0].content.c_str() + offset,
 					length,
 					genome[0].title.c_str(),
-
 					s.content.c_str(),
 					s.content.length(),
 					s.title.c_str(),

@@ -46,10 +46,14 @@ void Tree::Build() {
 Node *
 Tree::FindPath(
 	Node *node,
-	const char *s
+	const char *s,
+	bool *exactMatch
 	)
 {
 	Node *child = getChildByLabelBeginning(node, s[0]);
+	int len = strlen(s);
+
+	*exactMatch = false;
 
 	//No child by that label
 	if (child == nullptr) {
@@ -57,16 +61,24 @@ Tree::FindPath(
 	}
 
 	cout << child->len << " " << strlen(s) << endl;
-	for (int i = 1; i < strlen(s); i++) {
-		if (i >= child->len) {
-			return FindPath(child, s+i);
+	for (int i = 1; i < len; i++) {
+		if (i >= child->len && child->child != nullptr) {
+			return FindPath(child, s+i, exactMatch);
 		}
-		if (s[i] != input[child->beg + i]) {
+		if (i >= child->len && child->child == nullptr) {
+			panic("Hit a leaf~\n");
+		}
+		else if (s[i] != input[child->beg + i] ||
+			(i >= child->len && child->child == nullptr)) {
 			//Backtrack up to internal node most recently visited.
-			return child;
+			return node;
 		}
 	}
-	panic("shouldn't actually happen");
+
+	*exactMatch = true;
+	//All suffix id's will belong to the child. We are just part way through the
+	//edge leading up to that child.
+	return child;
 }
 
 Node *
@@ -542,10 +554,18 @@ Tree::FindLoc(
 	Node *t = root;
 	Node *deepestNode = t;
 	Node *temp;
+	bool exactMatch = false;
 
 	//Find deepest node/longest substring
 	while (read_ptr < len) {
-		temp = FindPath(t, s + read_ptr);
+		temp = FindPath(t, s + read_ptr, &exactMatch);
+		if (exactMatch) {
+			deepestNode = temp;
+			//TODO: change to continue? Come back to this if there is odd behavior
+			//If it's an exact match, there can't be another deeper node.
+			break;
+		}
+
 		read_ptr += temp->stringDepth - t->stringDepth;
 		if (temp->stringDepth > deepestNode->stringDepth) {
 			deepestNode = t;
