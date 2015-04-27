@@ -241,10 +241,9 @@ printGrid(
 
 	printf("Grid: \n");
 	for (int i = 0; i < align->m + 1; i++) {
-		for (int i = 0; i < align->n + 1; i++)
+		for (int j = 0; j < align->n + 1; j++)
 			printf("----------");
 		printf("\n| ");
-		int i = 0;
 		for (int j = 0; j < align->n + 1; j++) {
 			cell = getCell(&align->grid, i, j);
 			if (cell->S < -1000)
@@ -268,6 +267,29 @@ printGrid(
 			else
 				printf("D: %5d |", cell->D);
 		}
+		printf("\n| ");
+		for (int j = 0; j < align->n + 1; j++) {
+			cell = getCell(&align->grid, i, j);
+			printf("prev:  %c |", cell->prev);
+		}
 		printf("\n");
 	}
+	for (int i = 0; i < align->n + 1; i++)
+		printf("----------");
+	printf("\n\n");
+	printf("m: %d n: %d\n", align->m, align->n);
+	printf("Alignment path: %s\n", align->alignpath);
+	printf("%-40s%d\n", "Local alignment score = ", align->score);
+	printf("%-40s%d\n", "Score according to numbers generated = ",
+		align->nmatch*align->params.match +
+		align->nmismatch*align->params.mismatch +
+		align->ngap*align->params.g +
+		align->nopengaps*align->params.h);
+	printf("Number of matches = %d, mismatches = %d, gaps = %d, opening gaps = %d\n",
+		align->nmatch, align->nmismatch, align->ngap, align->nopengaps);
+	printf("Scores:  match = %d, mismatch = %d, h = %d, g = %d\n",
+		align->params.match, align->params.mismatch, align->params.h,
+		align->params.g);
+
+
 }
