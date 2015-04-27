@@ -2,7 +2,7 @@
 INCLUDES=-Isrc/SuffixTree/src -Isrc/Alignment
 
 STDIR=src/SuffixTree/src
-CFLAGS=-march=native -g
+CFLAGS=-march=native -O3
 DEPS=obj/suffix.o obj/alignment.o
 all: $(DEPS)
 	g++ -std=c++11 $(CFLAGS) $(INCLUDES) $(DEPS) src/io.cpp src/main.cpp src/ReadMapper.cpp
