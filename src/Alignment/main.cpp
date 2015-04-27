@@ -44,11 +44,13 @@ int main(int argc, char *argv[]) {
 		align = calculateGlobalAlignment(s1, strlen(s1), s1_name, s2, strlen(s2),
 			s2_name, &params);
 		outputGlobalResult(align);
+		printGrid(align);
 	}
 	else if (global == 1) {
-		align = calculateLocalAlignment(s1, strlen(s1), s1_name, s2, strlen(s1),
+		align = calculateLocalAlignment(s1, strlen(s1), s1_name, s2, strlen(s2),
 			s2_name, &params);
 		outputLocalResult(align);
+		printGrid(align);
 	}
 	else {
 		printf("Error: input 0 for global alignment and 1 for local alignment\n");
