@@ -15,7 +15,7 @@ using namespace suffixtree;
 
 int main (int argc, char *argv[]) {
 	if (argc < 3) {
-		printf("Fuck off and give me some more arguments, kay?\n");
+		printf("must pass at least two paramters\n");
 		return 1;
 	}
 
@@ -43,6 +43,8 @@ int main (int argc, char *argv[]) {
 		vector<int> L = st->FindLoc(s.content);
 		int best_i = -1;
 		double best_coverage = 0;
+		int start = 0;
+		int end = 0;
 		for (int j = 0; j < L.size(); j++) {
 			int offset = L[j];
 			if (offset < s.content.length()) {
@@ -51,8 +53,8 @@ int main (int argc, char *argv[]) {
 				offset -= s.content.length();
 			}
 			int length = 2 * s.content.length();
-			if (length + offset > s.content.length()) {
-				length = s.content.length() - offset;
+			if (length + offset > genome[0].content.length()) {
+				length -= ((length + offset) - genome[0].content.length());
 			}
 
 			Alignment *a = calculateLocalAlignment(
@@ -67,19 +69,19 @@ int main (int argc, char *argv[]) {
 			int alignlen = a->nmatch + a->ngap + a->nmismatch;
 			double identity = (double)a->nmatch / ((double)alignlen);
 			double coverage = (double)alignlen / ((double)s.content.length());
-			cout << identity << " " << coverage << endl;
 			if (identity > IdX && coverage > CoverY &&coverage > best_coverage) {
 				best_i = j;
 				best_coverage = coverage;
+				start = offset;
+				end = offset + length;
 			}
+			deleteAlignment(a);
 		}
-		/*
 		if (best_i == -1) {
 			cout << s.title << " No hit found" << endl;
 		} else {
-			cout << "HOT HIT FOUND BITCHES" << endl;
+			cout << s.title << " " << start << " " << end << endl;
 		}
-		*/
 
 
 	}

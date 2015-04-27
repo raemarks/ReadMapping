@@ -60,7 +60,6 @@ Tree::FindPath(
 		return node;
 	}
 
-	cout << child->len << " " << strlen(s) << endl;
 	for (int i = 1; i < len; i++) {
 		if (i >= child->len && child->child != nullptr) {
 			return FindPath(child, s+i, exactMatch);
@@ -573,7 +572,6 @@ Tree::FindLoc(
 		t = temp->suffixLink;
 	}
 
-	cout << "Deepest node: " << deepestNode->stringDepth << endl;
 	if (deepestNode->stringDepth >= XValue) {
 		for (int i = deepestNode->StartLeafIndex;
 			i <= deepestNode->EndLeafIndex; i++) {
