@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <cstring>
+using std::cout;
+using std::endl;
 
 namespace suffixtree
 {
@@ -54,6 +56,7 @@ Tree::FindPath(
 		return node;
 	}
 
+	cout << child->len << " " << strlen(s) << endl;
 	for (int i = 1; i < strlen(s); i++) {
 		if (i >= child->len) {
 			return FindPath(child, s+i);
@@ -535,12 +538,13 @@ Tree::FindLoc(
 	std::vector<int> vec;
 	int read_ptr = 0;
 	const char *s = r.c_str();
+	int len = r.length();
 	Node *t = root;
 	Node *deepestNode = t;
 	Node *temp;
 
 	//Find deepest node/longest substring
-	while (read_ptr < strlen(s)) {
+	while (read_ptr < len) {
 		temp = FindPath(t, s + read_ptr);
 		read_ptr += temp->stringDepth - t->stringDepth;
 		if (temp->stringDepth > deepestNode->stringDepth) {
@@ -549,6 +553,7 @@ Tree::FindLoc(
 		t = temp->suffixLink;
 	}
 
+	cout << "Deepest node: " << deepestNode->stringDepth << endl;
 	if (deepestNode->stringDepth >= XValue) {
 		for (int i = deepestNode->StartLeafIndex;
 			i <= deepestNode->EndLeafIndex; i++) {

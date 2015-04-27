@@ -55,9 +55,9 @@ typedef struct Alignment {
 	DPGrid grid;
 	ScoreParams params;
 
-	char *s1_name;
+	const char *s1_name;
 	const char *s1;
-	char *s2_name;
+	const char *s2_name;
 	const char *s2;
 	int m;
 	int n;
@@ -135,10 +135,10 @@ Alignment *
 calculateGlobalAlignment(
 	const char *s1,
 	int s1_len,
-	char *s1_name,
+	const char *s1_name,
 	const char *s2,
 	int s2_len,
-	char *s2_name,
+	const char *s2_name,
 	ScoreParams *params
 	);
 
@@ -146,10 +146,10 @@ Alignment *
 calculateLocalAlignment(
 	const char *s1,
 	int s1_len,
-	char *s1_name,
+	const char *s1_name,
 	const char *s2,
 	int s2_len,
-	char *s2_name,
+	const char *s2_name,
 	ScoreParams *params
 	);
 

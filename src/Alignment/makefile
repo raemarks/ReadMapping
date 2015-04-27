@@ -1,4 +1,5 @@
 all:
-	g++ -g -O2 -march=native -Wall main.cpp dp.cpp io.cpp
+	g++ -c dp.cpp -o alignment.o
+
 clean:
 	rm -rf a.out
