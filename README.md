@@ -15,3 +15,6 @@ The program takes two .fasta files as input, one containing a single reference g
 ```
 
 The program will output some performance statistics at the end of the read mapping output.
+
+## License
+MIT
