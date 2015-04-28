@@ -1,6 +1,7 @@
 #include "ReadMapper.h"
 #include "io.h"
 #include <SuffixTree.h>
+#include <yardstick.h>
 #include <dp.h>
 #include <iostream>
 #include <vector>
@@ -33,14 +34,35 @@ int main (int argc, char *argv[]) {
 	sp.h = -5;
 	sp.g = -1;
 
+	auto mapreads = new Yardstick();
+	auto output = new Yardstick();
+	auto construct = new Yardstick();
+	auto prepare = new Yardstick();
+	auto totalt = new Yardstick();
+	totalt->start();
+
+	construct->start();
 	Tree *st = new Tree(genome[0].content, "");
 	st->Build();
+	auto build_time = construct->end();
+
+	prepare->start();
 	st->PrepareIndexArray();
+	auto prepare_time = prepare->end();
 
 
+
+	int hits = 0;
+	int withreads = 0;
+	int aligns = 0;
+	mapreads->start();
 	for (int i = 0; i < sequences.size(); i++) {
 		Sequence& s = sequences[i];
 		vector<int> L = st->FindLoc(s.content);
+		aligns += L.size();
+		if (L.size() > 0) {
+			withreads++;
+		}
 		int best_i = -1;
 		double best_coverage = 0;
 		int start = 0;
@@ -77,14 +99,26 @@ int main (int argc, char *argv[]) {
 			}
 			deleteAlignment(a);
 		}
+		output->start();
 		if (best_i == -1) {
 			cout << s.title << " No hit found" << endl;
 		} else {
 			cout << s.title << " " << start << " " << end << endl;
+			hits++;
 		}
-
-
+		output->end();
 	}
+	auto reads_time = mapreads->end();
+
+	totalt->end();
+
+	printf("hit rate = %lf ( %d / %d )\n", 100 * (double)hits / (double)sequences.size(), hits, sequences.size());
+	printf("average alignments per read: %lf\n", (double)aligns/ sequences.size());
+	printf("mapreads = %lf seconds\n", mapreads->total() - output->total());
+	printf("output = %lf seconds\n", output->total());
+	printf("build st = %lf seconds\n", construct->total());
+	printf("prepare = %lf seconds\n", prepare->total());
+	printf("total = %lf seconds\n", totalt->total());
 
 	return 0;
 }

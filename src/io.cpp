@@ -21,7 +21,7 @@ int readInput(string finame, vector<Sequence> &out) {
 			}
 			content = "";
 			int length = line.length() - 1;
-			if (length > 10) {
+			if (length > 100) {
 				length = 10;
 			}
 			title = line.substr(1, length);
