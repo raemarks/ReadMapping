@@ -11,7 +11,7 @@ make
 ## Usage
 The program takes two .fasta files as input, one containing a single reference genome and another containing several sequences for reads. To run the program and map the reads to the reference genome, do the following:
 ```bash
-./a.out reference_genome.fasta reads_to_map.fasta
+./ReadMapper reference_genome.fasta reads_to_map.fasta
 ```
 
 The program will output some performance statistics at the end of the read mapping output.
