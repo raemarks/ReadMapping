@@ -14,3 +14,6 @@ obj/suffix.o: $(STDIR)/SuffixTree.cpp
 obj/alignment.o: src/Alignment/dp.cpp
 	cd src/Alignment && make
 	cp src/Alignment/alignment.o obj/alignment.o
+
+clean:
+	rm -rf obj/*

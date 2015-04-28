@@ -67,7 +67,8 @@ Tree::FindPath(
 		if (i >= child->len && child->child == nullptr) {
 			panic("Hit a leaf~\n");
 		}
-		else if (s[i] != input[child->beg + i] ||
+		else if ((s[i] != input[child->beg + i] && s[i] != 'N' &&
+			input[child->beg + i] != 'N') ||
 			(i >= child->len && child->child == nullptr)) {
 			//Backtrack up to internal node most recently visited.
 			return node;
