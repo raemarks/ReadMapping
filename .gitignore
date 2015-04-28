@@ -1,2 +1,12 @@
 *.swp
 src/Alignment/a.out
+Cherry_reads.fasta
+*.orig
+a.out
+obj/
+*.o
+*.txt
+*.fasta
+src/SuffixTree/obj/
+src/SuffixTree/suffix
+src/a.out
