@@ -113,7 +113,8 @@ int main (int argc, char *argv[]) {
 	totalt->end();
 
 	printf("hit rate = %lf ( %d / %d )\n", 100 * (double)hits / (double)sequences.size(), hits, sequences.size());
-	printf("average alignments per read: %lf\n", (double)aligns/ sequences.size());
+	printf("average alignments per read (total): %lf\n", (double)aligns/ sequences.size());
+	printf("average alignments per read: %lf\n", (double)aligns/ withreads);
 	printf("mapreads = %lf seconds\n", mapreads->total() - output->total());
 	printf("output = %lf seconds\n", output->total());
 	printf("build st = %lf seconds\n", construct->total());

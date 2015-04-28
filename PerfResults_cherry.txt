@@ -1,0 +1,9 @@
+read genome, length = 5362495
+read 917461 sequences
+hit rate = 0.045125 ( 414 / 917461 )
+average alignments per read: 0.046854
+mapreads = 12.774002 seconds
+output = 1.160588 seconds
+build st = 1.987015 seconds
+prepare = 0.306242 seconds
+total = 16.227856 seconds
