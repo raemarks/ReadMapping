@@ -67,9 +67,9 @@ Tree::FindPath(
 		if (i >= child->len && child->child == nullptr) {
 			panic("Hit a leaf~\n");
 		}
-		else if ((s[i] != input[child->beg + i] && s[i] != 'N' &&
-			input[child->beg + i] != 'N') ||
-			(i >= child->len && child->child == nullptr)) {
+		else if (s[i] != input[child->beg + i] ||
+			(i >= child->len && child->child == nullptr) ||
+			(s[i] == 'N' && input[child->beg + i] == 'N')) {
 			//Backtrack up to internal node most recently visited.
 			return node;
 		}
@@ -559,6 +559,9 @@ Tree::FindLoc(
 	//Find deepest node/longest substring
 	while (read_ptr < len) {
 		temp = FindPath(t, s + read_ptr, &exactMatch);
+		if (t == temp) {
+			break;
+		}
 		if (exactMatch) {
 			deepestNode = temp;
 			//TODO: change to continue? Come back to this if there is odd behavior
