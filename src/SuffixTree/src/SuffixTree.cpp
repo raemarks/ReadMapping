@@ -560,18 +560,24 @@ Tree::FindLoc(
 	while (read_ptr < len) {
 		temp = FindPath(t, s + read_ptr, &exactMatch);
 		if (t == temp) {
-			break;
+			read_ptr++;
+			t = t->suffixLink;
+			continue;
 		}
 		if (exactMatch) {
 			deepestNode = temp;
-			//TODO: change to continue? Come back to this if there is odd behavior
+			if (temp->stringDepth > deepestNode->stringDepth) {
+				deepestNode = temp;
+			}
+			//read_ptr += temp->stringDepth - t->stringDepth;
 			//If it's an exact match, there can't be another deeper node.
+			//TODO: maybe switch to break
 			break;
 		}
 
 		read_ptr += temp->stringDepth - t->stringDepth;
 		if (temp->stringDepth > deepestNode->stringDepth) {
-			deepestNode = t;
+			deepestNode = temp;
 		}
 		t = temp->suffixLink;
 	}

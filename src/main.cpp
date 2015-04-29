@@ -90,8 +90,8 @@ int main (int argc, char *argv[]) {
 					);
 			int alignlen = a->nmatch + a->ngap + a->nmismatch;
 			double identity = (double)a->nmatch / ((double)alignlen);
-			double coverage = (double)alignlen / ((double)s.content.length());
-			if (identity > IdX && coverage > CoverY &&coverage > best_coverage) {
+			double coverage =((double)s.content.length()) /(double)alignlen ;
+			if (identity > IdX && coverage > CoverY && coverage > best_coverage) {
 				best_i = j;
 				best_coverage = coverage;
 				start = offset;
