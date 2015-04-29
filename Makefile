@@ -5,7 +5,7 @@ STDIR=src/SuffixTree/src
 CFLAGS=-march=native -O3
 DEPS=obj/suffix.o obj/alignment.o obj/yardstick.o
 all: $(DEPS)
-	g++ -std=c++11 -lrt $(CFLAGS) $(INCLUDES) $(DEPS) src/io.cpp src/main.cpp src/ReadMapper.cpp
+	g++ -std=c++11 -lrt $(CFLAGS) $(INCLUDES) $(DEPS) src/io.cpp src/main.cpp src/ReadMapper.cpp -o ReadMapper
 
 obj/suffix.o: $(STDIR)/SuffixTree.cpp
 	cd src/SuffixTree && make
