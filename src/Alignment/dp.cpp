@@ -174,6 +174,7 @@ deleteAlignment(
 {
 	free(align->alignpath);
 	free(align->grid.cells);
+	free(align);
 }
 
 void

@@ -20,4 +20,4 @@ obj/yardstick.o:
 	cp src/yardstick/yardstick.o obj/yardstick.o
 
 clean:
-	rm -rf obj/*
+	rm -rf obj/* src/Alignment/alignment.o src/SuffixTree/obj/* src/SuffixTree/suffix.o ReadMapper
