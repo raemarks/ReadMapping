@@ -121,7 +121,7 @@ class Tree
 		Node *FindPath(
 			Node *node,
 			const char *s,
-			bool *exactMatch
+			int *extra
 			);
 
 		//Returns a pointer to the newly created leaf node

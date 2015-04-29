@@ -47,11 +47,11 @@ Node *
 Tree::FindPath(
 	Node *node,
 	const char *s,
-	bool *exactMatch
+	int *extra
 	)
 {
 	Node *child = getChildByLabelBeginning(node, s[0]);
-	*exactMatch = false;
+	*extra = 0;
 
 	//No child by that label
 	if (child == nullptr) {
@@ -61,7 +61,7 @@ Tree::FindPath(
 	int len = strlen(s);
 	for (int i = 1; i < len; i++) {
 		if (i >= child->len && child->child != nullptr) {
-			return FindPath(child, s+i, exactMatch);
+			return FindPath(child, s+i, extra);
 		}
 		if (i >= child->len && child->child == nullptr) {
 			panic("Hit a leaf~\n");
@@ -70,11 +70,11 @@ Tree::FindPath(
 			(i >= child->len && child->child == nullptr) ||
 			(s[i] == 'N' && input[child->beg + i] == 'N')) {
 			//Backtrack up to internal node most recently visited.
+			*extra = i - 1;
 			return node;
 		}
 	}
 
-	*exactMatch = true;
 	//All suffix id's will belong to the child. We are just part way through the
 	//edge leading up to that child.
 	return child;
@@ -550,33 +550,29 @@ Tree::FindLoc(
 	int read_ptr = 0;
 	const char *s = r.c_str();
 	int len = r.length();
+	int extra;
+	int maxdepth = 0;
 	Node *t = root;
 	Node *deepestNode = t;
 	Node *temp;
-	bool exactMatch = false;
 
 	//Find deepest node/longest substring
 	while (read_ptr < len) {
-		temp = FindPath(t, s + read_ptr, &exactMatch);
-		if (t == temp) {
+		temp = FindPath(t, s + read_ptr, &extra);
+		if (temp == root) {
 			read_ptr++;
 			continue;
 		}
-		if (exactMatch) {
-			deepestNode = temp;
-			//TODO: change to continue? Come back to this if there is odd behavior
-			//If it's an exact match, there can't be another deeper node.
-			break;
-		}
 
 		read_ptr += temp->stringDepth - t->stringDepth;
-		if (temp->stringDepth > deepestNode->stringDepth) {
+		if (temp->stringDepth + extra > maxdepth) {
 			deepestNode = temp;
+			maxdepth = temp->stringDepth + extra;
 		}
 		t = temp->suffixLink;
 	}
 
-	if (deepestNode->stringDepth >= XValue) {
+	if (maxdepth >= XValue) {
 		for (int i = deepestNode->StartLeafIndex;
 			i <= deepestNode->EndLeafIndex; i++) {
 			vec.push_back(A[i]);
