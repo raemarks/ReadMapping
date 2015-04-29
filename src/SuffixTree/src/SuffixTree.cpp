@@ -51,8 +51,6 @@ Tree::FindPath(
 	)
 {
 	Node *child = getChildByLabelBeginning(node, s[0]);
-	int len = strlen(s);
-
 	*exactMatch = false;
 
 	//No child by that label
@@ -60,6 +58,7 @@ Tree::FindPath(
 		return node;
 	}
 
+	int len = strlen(s);
 	for (int i = 1; i < len; i++) {
 		if (i >= child->len && child->child != nullptr) {
 			return FindPath(child, s+i, exactMatch);
@@ -560,7 +559,8 @@ Tree::FindLoc(
 	while (read_ptr < len) {
 		temp = FindPath(t, s + read_ptr, &exactMatch);
 		if (t == temp) {
-			break;
+			read_ptr++;
+			continue;
 		}
 		if (exactMatch) {
 			deepestNode = temp;
@@ -571,7 +571,7 @@ Tree::FindLoc(
 
 		read_ptr += temp->stringDepth - t->stringDepth;
 		if (temp->stringDepth > deepestNode->stringDepth) {
-			deepestNode = t;
+			deepestNode = temp;
 		}
 		t = temp->suffixLink;
 	}
