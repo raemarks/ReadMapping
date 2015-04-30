@@ -5,7 +5,6 @@
 #include <dp.h>
 #include <iostream>
 #include <vector>
-#include <thread>
 
 #define IdX ((double)0.90)
 #define CoverY ((double)0.80)
@@ -13,7 +12,6 @@
 using std::cout;
 using std::endl;
 using std::vector;
-using std::thread;
 using namespace suffixtree;
 
 ScoreParams sp;
@@ -39,6 +37,8 @@ int main (int argc, char *argv[]) {
 		return 1;
 	}
 
+	stats readstats = {0};
+	Tree *st = nullptr;
 	vector<Sequence> genome;
 	readInput(argv[1], genome);
 	cout << "read genome, length = " << genome[0].content.length() << endl;
@@ -57,54 +57,31 @@ int main (int argc, char *argv[]) {
 	auto construct = new Yardstick();
 	auto prepare = new Yardstick();
 	auto totalt = new Yardstick();
+
 	totalt->start();
 
 	construct->start();
-	Tree *st = new Tree(genome[0].content, "");
-	st->Build();
-	auto build_time = construct->end();
+	{
+		st = new Tree(genome[0].content, "");
+		st->Build();
+	}
+	construct->end();
 
 	prepare->start();
-	st->PrepareIndexArray();
-	auto prepare_time = prepare->end();
+	{
+		st->PrepareIndexArray();
+	}
+	prepare->end();
 
 
 	vector<result*> results(sequences.size());
 
-	int nthreads = 2;
-	stats readstats = {0};
-	vector<stats*> thrstats(nthreads);
-	vector<thread*> threads;
 	mapreads->start();
-
-	int chunksize = sequences.size() / nthreads;
-	for (int i = 0; i < nthreads; i++) {
-		int begin = (i * chunksize);
-		int end = (i + 1) * chunksize;
-		thrstats[i] = new stats();
-		thrstats[i]->hits = 0;
-		thrstats[i]->aligns = 0;
-		thrstats[i]->withreads = 0;
-
-		thread *t = new thread(mapReadsRange, st, std::ref(genome[0]), std::ref(sequences), begin, end, thrstats[i], std::ref(results));
-		threads.push_back(t);
+	{
+		mapReadsRange(st, genome[0], sequences, 0, sequences.size(), &readstats, results);
 	}
-	for (int i = 0; i < nthreads; i++) {
-		threads[i]->join();
-	}
+	mapreads->end();
 
-	for (int i = 0; i < nthreads; i++) {
-		readstats.aligns += thrstats[i]->aligns;
-		readstats.hits += thrstats[i]->hits;
-		readstats.withreads += thrstats[i]->withreads;
-	}
-
-	auto reads_time = mapreads->end();
-
-	totalt->end();
-
-	int aligns = readstats.aligns;
-	int withreads = readstats.withreads;
 	output->start();
 	for (int i = 0; i < results.size(); i++) {
 		Sequence &s = sequences[i];
@@ -116,13 +93,17 @@ int main (int argc, char *argv[]) {
 		}
 	}
 	output->end();
+	totalt->end();
+
+	int aligns = readstats.aligns;
+	int withreads = readstats.withreads;
 	int hits = readstats.hits;
 
 	printf("hit rate = %lf ( %d / %d )\n", 100 * (double)hits / (double)sequences.size(), hits, sequences.size());
 	printf("average alignments per read (total): %lf\n", (double)aligns/ sequences.size());
 	printf("average alignments per read: %lf (%d / %d)\n", (double)aligns/ withreads, aligns, withreads);
 	printf("mapreads = %lf seconds\n", mapreads->total());
-	printf("output = %lf seconds\n", output->total() - mapreads->total());
+	printf("output = %lf seconds\n", output->total());
 	printf("build st = %lf seconds\n", construct->total());
 	printf("prepare = %lf seconds\n", prepare->total());
 	printf("total = %lf seconds\n", totalt->total());
